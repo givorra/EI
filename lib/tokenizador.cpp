@@ -17,23 +17,28 @@
 Tokenizador::Tokenizador(const string& delimitadoresPalabra, const bool& kcasosEspeciales, const bool& minuscSinAcentos):
 	delimiters(delimitadoresPalabra),
 	casosEspeciales(kcasosEspeciales),
-	pasarAminuscSinAcentos(minuscSinAcentos)
+	pasarAminuscSinAcentos(minuscSinAcentos),
+	status(NINGUNO)
 {}
 
 Tokenizador::Tokenizador():
 	delimiters(",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t\n\r@"),
 	casosEspeciales(true),
-	pasarAminuscSinAcentos(false)
+	pasarAminuscSinAcentos(false),
+	status(NINGUNO)
 {}
 
 Tokenizador::Tokenizador(const Tokenizador& t):
 	delimiters(t.delimiters),
 	casosEspeciales(t.casosEspeciales),
-	pasarAminuscSinAcentos(t.pasarAminuscSinAcentos)
+	pasarAminuscSinAcentos(t.pasarAminuscSinAcentos),
+	status(t.status)
 {}
 
-Tokenizador::~Tokenizador():delimiters("")
-{}
+Tokenizador::~Tokenizador()
+{
+	delimiters = "";
+}
 
 Tokenizador& Tokenizador::operator= (const Tokenizador& t)
 {
@@ -151,9 +156,19 @@ inline void Tokenizador::DelimitadoresPalabra(const string& nuevoDelimiters)
 	delimiters = nuevoDelimiters;
 }
 
-inline void Tokenizador::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters)
+void Tokenizador::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters)
 {
-	delimiters += nuevoDelimiters;
+	sort(nuevoDelimiters.begin(), nuevoDelimiters.end());
+
+	char lastDelimiter = 0;
+
+	for(int i = 0; i < nuevoDelimiters.size(); i++)
+	{
+		if(nuevoDelimiters[i] != lastDelimiter && !delimiters.find(nuevoDelimiters[i]))
+			delimiters += nuevoDelimiters[i];
+
+		lastDelimiter = nuevoDelimiters[i];
+	}
 }
 
 inline string Tokenizador::DelimitadoresPalabra() const
@@ -167,7 +182,7 @@ ostream& operator<<(ostream& o, const Tokenizador& t)
 	return o;
 }
 
-if(!casosEspeciales || casoEspecial(c))
+//if(!casosEspeciales || casoEspecial(c))
 inline void Tokenizador::CasosEspeciales(const bool& nuevoCasosEspeciales)
 {
 	casosEspeciales = nuevoCasosEspeciales;
@@ -194,25 +209,29 @@ string Tokenizador::getMinusSinAcentos(const string& token) const
 
 	for(int i = 0; i < token.size(); i++)
 	{
-		switch(token[i])
+		switch((unsigned char)token[i])
 		{	// Codifiacion ISO-8859
-			case 225:
+			case 225: case 193:
 				auxToken += 'a';
 				break;
-			case 233:
+			case 233: case 201:
 				auxToken += 'e';
 				break;
-			case 237:
+			case 237: case 205:
 				auxToken += 'i';
 				break;
-			case 243:
+			case 243: case 211:
 				auxToken += 'o';
 				break;
-			case 250:
+			case 250: case 218:
 				auxToken += 'u';
 				break;
 			default:
-				auxToken += tolower(token[i]);
+				if(token[i] >= 'A' && token[i] <= 'Z')
+					auxToken += tolower(token[i]);
+				else
+					auxToken += token[i];
+				break;
 		}
 	}
 
@@ -220,29 +239,35 @@ string Tokenizador::getMinusSinAcentos(const string& token) const
 }
 
 bool Tokenizador::casoEspecial(const string& token) const
-{
+{/*
 	switch(status)
 	{
 		case NINGUNO:
 			if(token.substr(0, 5) == "http:" || token.substr(0, 6) == "https:" || token.substr(0, 5) == "ftp:")
 			{
 				status = URL;
-				specialCaseToken = "";
+				//specialCaseToken = "";
 				return true;
 			}
 
 			break;
 		case URL:
+			if(urlDelimiters.find(token[token.length()-1]))
+				return true;
+			else
+			{
+				status = NINGUNO;
+				return false;
+			}
 			break;
 		case REAL:
 			break;
 		case EMAIL:
 			break;
-		case NINGUNO:
-			break;
 	}
 
 	return false;
+	*/
 }
 
 

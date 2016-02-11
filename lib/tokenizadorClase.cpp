@@ -121,7 +121,7 @@ void TokenizadorClase::DelimitadoresPalabra(const string& nuevoDelimiters)
 	delimiters = nuevoDelimiters;
 }
 
-void TokenizadorClase::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters)
+/*void TokenizadorClase::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters)
 {
 	string auxDelimiters = delimiters + nuevoDelimiters;
 	sort(delimiters.begin(), delimiters.end());
@@ -135,6 +135,20 @@ void TokenizadorClase::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters
 			delimiters += auxDelimiters[i];
 
 		lastDelimiter = auxDelimiters[i];
+	}
+}*/
+void TokenizadorClase::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters)
+{
+	//sort(nuevoDelimiters.begin(), nuevoDelimiters.end());
+
+	char lastDelimiter = 0;
+
+	for(int i = 0; i < nuevoDelimiters.size(); i++)
+	{
+		if(nuevoDelimiters[i] != lastDelimiter && !delimiters.find(nuevoDelimiters[i]))
+			delimiters += nuevoDelimiters[i];
+
+		lastDelimiter = nuevoDelimiters[i];
 	}
 }
 

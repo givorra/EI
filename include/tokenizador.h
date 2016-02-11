@@ -17,14 +17,13 @@
 #include <cstdlib>
 #include <sstream>
 #include <string>
-#include <stdio.h>
+#include <algorithm>
+//#include <stdio.h>
 
 using namespace std;
 
 enum TCasoEspecial  {NINGUNO, URL, REAL, EMAIL, ACRONIMO};
 
-const string iden1URL = "http:";
-const string iden1URL = "https:";
 const string urlDelimiters = "_:/.?&-=#@";
 
 class Tokenizador {
@@ -43,13 +42,13 @@ private:
 	bool pasarAminuscSinAcentos;
 
 	TCasoEspecial status;
-	string specialCaseToken;
+	//string specialCaseToken;
 
-	string getMinusSinAcentos(const string& token) const;
 	bool casoEspecial(const string& token) const;
 
 public:
 
+	string getMinusSinAcentos(const string& token) const;
 	// Inicializa delimiters a delimitadoresPalabra; casosEspeciales a kcasosEspeciales; pasarAminuscSinAcentos a minuscSinAcentos
 	Tokenizador(const string& delimitadoresPalabra, const bool& kcasosEspeciales, const bool& minuscSinAcentos);
 	// Inicializa delimiters=",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t\n\r@";	casosEspeciales a true; pasarAminuscSinAcentos a false
@@ -58,6 +57,7 @@ public:
 	Tokenizador(const Tokenizador&);
 	// Inicializa variable privada delimiters a delimitadoresPalabra
 	Tokenizador(const string& delimitadoresPalabra);
+	~Tokenizador();
 
 	// Cambia la variable privada “casosEspeciales”
 	void CasosEspeciales (const bool& nuevoCasosEspeciales);
