@@ -340,7 +340,6 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 				{
 					//status = REAL6;
 					status = TOKENIZARREAL;
-					//npos -= 2;
 					--npos;
 				}
 				else
@@ -349,18 +348,41 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			case EMAIL:
 				npos = pos;
 				c = str[npos];
-				if(c >= 'a' && c <= 'z')
+				if(c == '@')
+					status = EMAIL2;
+				else
+					status = EMAIL1;
+				/*if(c >= 'a' && c <= 'z')
 					status = EMAIL1;
 				else
 					status = ACRONIMO;
+				break;*/
 				break;
 			case EMAIL1:
 				if(c == '@')
 					status = EMAIL2;
-				if((c >= 'a' && c <= 'z') ||emailDelimiters.find(c) == string::npos)
+				else if(emailDelimiters.find(c) != string::npos)
+				{}	// Para excluir los emailDelimiter y mantenerse en el estado
+				else if(getDelimiters().find(c) != string::npos)
 					status = ACRONIMO;
-
 				break;
+			case EMAIL2:
+				if(c == '@')
+					status = ACRONIMO;
+				else if(emailDelimiters.find(c) != string::npos)
+					status = EMAIL3;
+				else if(getDelimiters().find(c) == string::npos)
+					status = EMAIL3;
+				break;
+			case EMAIL3:
+				if(c == '@')
+					status = ACRONIMO;
+				else if(emailDelimiters.find(c) != string::npos)
+				{}
+				else if(getDelimiters().find(c) != string::npos)
+					status = TOKENIZAR;
+				break;
+			case ACRONIMO:
 			case NORMAL:
 				npos = str.find_first_of(getDelimiters(), pos);
 				status = TOKENIZAR;
