@@ -22,9 +22,9 @@
 
 using namespace std;
 
-enum TCasoEspecial  {NINGUNO, URL, REAL, EMAIL, ACRONIMO};
+enum TCasoEspecial  {TOKENIZAR, TOKENIZARREAL, URL, URL1, REAL, REAL1, REAL2, REAL3, REAL4, REAL5, REAL6, REAL7, EMAIL, ACRONIMO, NORMAL};
 
-const string urlDelimiters = "_:/.?&-=#@";
+
 
 class Tokenizador {
 	friend ostream& operator<<(ostream&, const Tokenizador&);
@@ -41,10 +41,15 @@ private:
 	// Si true pasará el to
 	bool pasarAminuscSinAcentos;
 
-	TCasoEspecial status;
+	//TCasoEspecial status;
 	//string specialCaseToken;
 
-	bool casoEspecial(const string& token) const;
+	void tokenizarConCasosEspeciales(const string& str, list<string>& tokens) const;
+	string getDelimiters() const;
+	bool findRealDelimiters(char c) const;
+
+	const string urlDelimiters = "_:/.?&-=#@";
+	const string realDelimiters = "%$€ºª";
 
 public:
 
