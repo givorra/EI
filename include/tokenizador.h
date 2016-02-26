@@ -22,7 +22,7 @@
 
 using namespace std;
 
-enum TCasoEspecial  {TOKENIZAR, TOKENIZARREAL, URL, URL1, REAL, REAL1, REAL2, REAL3, REAL4, REAL5, REAL6, REAL7, EMAIL, EMAIL1, EMAIL2, EMAIL3, EMAIL4, ACRONIMO, NORMAL};
+enum TCasoEspecial {TOKENIZAR, TOKENIZARREAL, TOKENIZARACRONIMO, URL, URL1, REAL, REAL1, REAL2, REAL3, REAL4, REAL5, REAL6, REAL7, EMAIL, EMAIL1, EMAIL2, EMAIL3, EMAIL4, ACRONIMO, ACRONIMO1, ACRONIMO2, ACRONIMO3, ACRONIMO4, ACRONIMO5, ACRONIMO6, GUION, NORMAL};
 
 
 
@@ -47,6 +47,7 @@ private:
 	void tokenizarConCasosEspeciales(const string& str, list<string>& tokens) const;
 	string getDelimiters() const;
 	bool findRealDelimiters(char c) const;
+	bool isDelimiter(char c) const;
 
 	const string urlDelimiters = "_:/.?&-=#@";
 	const string realDelimiters = "%$€ºª";

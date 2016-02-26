@@ -118,7 +118,8 @@ bool Tokenizador::Tokenizar(const string& NomFichEntr, const string& NomFichSal)
 		f << (*itS) << endl;
 	}
 	f.close();
-
+	if(!tokens.empty())
+		tokens.clear();
 	return true;
 }
 
@@ -255,6 +256,8 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 	bool exit = false;
 	bool addCero = false;
 	bool specialRealDelimiter = false;
+	int nLeftPointAcronim = 0;
+	int nRigthPointAcronim = 0;
 
 	while(!exit)
 	{
@@ -270,7 +273,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					status = URL1;
 					npos = str.find_first_of(':', pos);
 				}
-				else if(c != '.' && getDelimiters().find(c) != string::npos)	// Si el primer caracter analizado es un delimitador, lo saltamos
+				else if(c != '.' && isDelimiter(c))	// Si el primer caracter analizado es un delimitador, lo saltamos
 					++pos;
 				else
 					status = REAL;
@@ -313,7 +316,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			case REAL2:
 				if(c == '.' || c == ',')
 					status = REAL3;
-				else if(getDelimiters().find(c) != string::npos || str[npos] == '\0')
+				else if(isDelimiter(c))
 					status = TOKENIZARREAL;
 				else if(findRealDelimiters(c))
 				{
@@ -326,7 +329,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			case REAL3:
 				if(c >= '0' && c <= '9')
 					status = REAL2;
-				else if(getDelimiters().find(c) != string::npos || str[npos] == '\0')
+				else if(isDelimiter(c))
 				{
 					// status = REAL4
 					status = TOKENIZARREAL;
@@ -336,7 +339,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					status = EMAIL;
 				break;
 			case REAL5:
-				if(getDelimiters().find(c) != string::npos || str[npos] == '\0')
+				if(isDelimiter(c))
 				{
 					//status = REAL6;
 					status = TOKENIZARREAL;
@@ -363,7 +366,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					status = EMAIL2;
 				else if(emailDelimiters.find(c) != string::npos)
 				{}	// Para excluir los emailDelimiter y mantenerse en el estado
-				else if(getDelimiters().find(c) != string::npos)
+				else if(isDelimiter(c))
 					status = ACRONIMO;
 				break;
 			case EMAIL2:
@@ -371,7 +374,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					status = ACRONIMO;
 				else if(emailDelimiters.find(c) != string::npos)
 					status = EMAIL3;
-				else if(getDelimiters().find(c) == string::npos)
+				else if(isDelimiter(c))
 					status = EMAIL3;
 				break;
 			case EMAIL3:
@@ -379,15 +382,92 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					status = ACRONIMO;
 				else if(emailDelimiters.find(c) != string::npos)
 				{}
-				else if(getDelimiters().find(c) != string::npos)
+				else if(isDelimiter(c))
 					status = TOKENIZAR;
 				break;
 			case ACRONIMO:
-			case NORMAL:
-				npos = str.find_first_of(getDelimiters(), pos);
-				status = TOKENIZAR;
+				npos = pos;
+				c = str[npos];
+				if(c == '.')
+				{
+					++nLeftPointAcronim;
+					status = ACRONIMO1;
+				}
+				else
+					status = ACRONIMO2;
 				break;
+			case ACRONIMO1:
+				if(c == '.')
+					++nLeftPointAcronim;
+				else if(isDelimiter(c))
+					status = GUION;
+				else
+					status = ACRONIMO2;
+				break;
+			case ACRONIMO2:
+				if(c == '.')
+				{
+					++nRigthPointAcronim;
+					status = ACRONIMO6;
+				}
+				else if(isDelimiter(c))
+					status = GUION;
+				//else
+				//	status = GUION;
+				break;
+			case ACRONIMO3:
+				if(c == '.')
+				{
+					++nRigthPointAcronim;
+					status = ACRONIMO4;
+				}
+				else if(!isDelimiter(c))
+				{
+					--nRigthPointAcronim;;
+					status = ACRONIMO5;
+				}
+				else	// Delimitador
+				{
+					status = TOKENIZARACRONIMO;
+				}
+				break;
+			case ACRONIMO4:
+				if(c == '.')
+					++nRigthPointAcronim;
+				else if(isDelimiter(c))
+					status = TOKENIZARACRONIMO;
+				else
+					status = GUION;
+				break;
+			case ACRONIMO5:
+				if(c == '.')
+				{
+					++nRigthPointAcronim;
+					status = ACRONIMO3;
+				}
+				else if(isDelimiter(c))
+					status = TOKENIZARACRONIMO;
 
+				break;
+			case ACRONIMO6:
+				if(c == '.' || isDelimiter(c))
+					status = GUION;
+				else
+				{
+					--nRigthPointAcronim;
+					status = ACRONIMO5;
+				}
+				break;
+			case GUION:
+			case NORMAL:
+				if(!isDelimiter(str[pos]))
+				{
+					npos = str.find_first_of(getDelimiters(), pos);
+					status = TOKENIZAR;
+					break;
+				}
+				else
+					++pos;
 		}
 		if(status == TOKENIZAR)
 		{
@@ -397,8 +477,11 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			pos = npos+1;
 			addCero = false;
 			specialRealDelimiter = false;
+			nLeftPointAcronim = 0;
+			nRigthPointAcronim = 0;
 
-			if(str[npos] == '\0')
+			//if(str[npos] == '\0')
+			if(npos >= str.length())
 				exit = true;
 		}
 		else if(status == TOKENIZARREAL)
@@ -419,7 +502,23 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			pos = npos+1;
 			addCero = false;
 			specialRealDelimiter = false;
+			nLeftPointAcronim = 0;
+			nRigthPointAcronim = 0;
 
+
+			if(str[npos] == '\0')
+				exit = true;
+		}
+		else if(status == TOKENIZARACRONIMO)
+		{
+			tokens.push_back(str.substr(pos+nLeftPointAcronim, (npos-nRigthPointAcronim) - (pos+nLeftPointAcronim)));
+			cout <<"--"+tokens.back() << endl;
+			status = URL;
+			pos = npos+1;
+			addCero = false;
+			specialRealDelimiter = false;
+			nLeftPointAcronim = 0;
+			nRigthPointAcronim = 0;
 
 			if(str[npos] == '\0')
 				exit = true;
@@ -431,7 +530,19 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 
 string Tokenizador::getDelimiters() const
 {
-	return delimiters+" ";
+	return " "+delimiters;
+}
+
+bool Tokenizador::isDelimiter(char c) const
+{
+	if(c == '\0')
+		return true;
+	else if(c == ' ')
+		return true;
+	else if(delimiters.find(c) != string::npos)
+		return true;
+	else
+		return false;
 }
 
 bool Tokenizador::findRealDelimiters(char c) const
@@ -443,6 +554,8 @@ bool Tokenizador::findRealDelimiters(char c) const
 	else
 		return false;
 }
+
+
 
 
 

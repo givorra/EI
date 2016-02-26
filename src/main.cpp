@@ -31,6 +31,43 @@ int main()
 	list<string> tokens;
 	int tam;
 
+	/* +++++++++++++++++++++++++++++ TEST ACRONIMOS ++++++++++++++++++++++++++++++++++++++++++*/
+
+	a.DelimitadoresPalabra("@.&");
+
+	a.Tokenizar("U.S.A p1 e.g. p2. La", lt1);
+	printTokens(lt1);
+	// La lista de tokens a devolver debería contener: "U.S.A, p1, e.g, p2, La"
+	a.Tokenizar("U..S.A p1 e..g. p2. La", lt1);
+	printTokens(lt1);
+	// La lista de tokens a devolver debería contener: "U, S.A, p1, e, g, p2, La"
+	a.Tokenizar("...U.S.A p1 e..g. p2. La", lt1);
+	printTokens(lt1);
+	// La lista de tokens a devolver debería contener: "U.S.A, p1, e, g, p2, La"
+	a.Tokenizar("Hack.4.Good p1", lt1);
+	printTokens(lt1);
+	// La lista de tokens a devolver debería contener: "Hack.4.Good, p1"
+	a.DelimitadoresPalabra("");
+	a.Tokenizar("U.S.A .U.S.A .p1 p1 e.g. p2. La", lt1);
+	printTokens(lt1);
+	// La lista de tokens a devolver debería contener: "U.S.A, U.S.A, .p1, p1, e.g, p2., La"
+	a.Tokenizar("U..S.A p1 e..g. p2. La", lt1);
+	printTokens(lt1);
+	// La lista de tokens a devolver debería contener: "U..S.A, p1, e..g., p2.,	La"
+	a.Tokenizar("...U.S.A p1 e..g. p2. La", lt1);
+	printTokens(lt1);
+	// La lista de tokens a devolver debería contener: "...U.S.A, p1, e..g., p2.,La"
+	a.Tokenizar("a&U.S.A p1 e.g. p2. La", lt1);
+	printTokens(lt1);
+	// La lista de tokens a devolver debería contener: "a&U.S.A, p1, e.g, p2., La"
+	a.DelimitadoresPalabra("&");
+	a.Tokenizar("a&U.S.A p1 e.g. p2. La", lt1);
+	printTokens(lt1);
+	// La lista de tokens a devolver debería contener: "a, U.S.A, p1, e.g, p2.,	La"
+	/* +++++++++++++++++++++++++++++ TEST ACRONIMOS ++++++++++++++++++++++++++++++++++++++++++*/
+
+	/* +++++++++++++++++++++++++++++ TEST EMAIL ++++++++++++++++++++++++++++++++++++++++++*/
+	/*
 	a.DelimitadoresPalabra("@.&");
 	a.Tokenizar("catedraTelefonicaUA@iuii.ua.es p1 p2", tokens);
 	printTokens(tokens);
@@ -43,9 +80,11 @@ int main()
 	a.DelimitadoresPalabra("&.");
 	a.Tokenizar("catedraTelefonicaUA@iuii.ua.es p1 p2", tokens);
 	printTokens(tokens);
+
 	// La lista de tokens a devolver debería contener:"catedraTelefonicaUA@iuii.ua.es, p1, p2"
 	a.Tokenizar("pal1 @iuii.ua.es p1 p2", tokens);
 	printTokens(tokens);
+
 	// La lista de tokens a devolver debería contener: "pal1, @iuii.ua.es, p1, p2"
 	a.Tokenizar("pal1&@iuii.ua.es p1 p2", tokens);
 	printTokens(tokens);
@@ -55,9 +94,9 @@ int main()
 	// La lista de tokens a devolver debería contener: "pal1, catedra@iuii.ua.es,p1, p2"
 	a.Tokenizar("pal1 cat@iuii.ua.es@cd p1 p2", tokens);
 	printTokens(tokens);
-	// La lis
 	// La lista de tokens a devolver debería contener: "pal1, iuii.ua.es, p1, p2"
-
+	*/
+	// ++++++++++++++++++++++++++++ TEST EMAIL +++++++++++++++++++++++++++++++++++++ */
 	// **************************** PRUEBA DE PASAR A MINUSCULAS *******************************/
 	/*
 
