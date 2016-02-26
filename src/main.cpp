@@ -74,15 +74,15 @@ int main()
 	{
 		cout << lt1.front() <<", ";
 		lt1.pop_front();
-	}
-	// La lista de tokens a devolver debería contener (no extraería números sino acrónimos): "pal1 10.00a 10.000.a.000 10/12/85 1 23E+10"
+	}*/
+	// La lista de tokens a devolver debería contener (no extraería números sino acrónimos): "pal1 10.00a 10.000.a.000 10/12/85 1,23E+10"
 	a.Tokenizar("pal1&10.00@10.000&abc@10/12/85", lt1);
 	tam = lt1.size();
 	for(int i = 0; i < tam; i++)
 	{
 		cout << lt1.front() <<", ";
 		lt1.pop_front();
-	}
+	}/*
 	// La lista de tokens a devolver debería contener (extraería un email): "pal1 10.00 10.000 abc@10/12/85"
 	a.Tokenizar(".34@@&,56", lt1);
 	tam = lt1.size();

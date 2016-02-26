@@ -347,7 +347,20 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					status = EMAIL;
 				break;
 			case EMAIL:
+				npos = pos;
+				c = str[npos];
+				if(c >= 'a' && c <= 'z')
+					status = EMAIL1;
+				else
+					status = ACRONIMO;
+				break;
+			case EMAIL1:
+				if(c == '@')
+					status = EMAIL2;
+				if((c >= 'a' && c <= 'z') ||emailDelimiters.find(c) == string::npos)
+					status = ACRONIMO;
 
+				break;
 			case NORMAL:
 				npos = str.find_first_of(getDelimiters(), pos);
 				status = TOKENIZAR;
@@ -368,13 +381,14 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 		}
 		else if(status == TOKENIZARREAL)
 		{
-			cout <<"--"<< str.substr(pos, npos-pos) << endl;
+
 			if(addCero)
 			{
 				tokens.push_back("0"+str.substr(pos, npos-pos));
 			}
 			else
 				tokens.push_back(str.substr(pos, npos-pos));
+			cout <<"--"+tokens.back() << endl;
 
 			if(specialRealDelimiter == true)	// Si ha encontrado un realDelimiter retrocede una posicion para prodesarlo a parte
 				--npos;

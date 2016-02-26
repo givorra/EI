@@ -22,7 +22,7 @@
 
 using namespace std;
 
-enum TCasoEspecial  {TOKENIZAR, TOKENIZARREAL, URL, URL1, REAL, REAL1, REAL2, REAL3, REAL4, REAL5, REAL6, REAL7, EMAIL, ACRONIMO, NORMAL};
+enum TCasoEspecial  {TOKENIZAR, TOKENIZARREAL, URL, URL1, REAL, REAL1, REAL2, REAL3, REAL4, REAL5, REAL6, REAL7, EMAIL, EMAIL1, EMAIL2, EMAIL3, EMAIL4, ACRONIMO, NORMAL};
 
 
 
@@ -50,6 +50,7 @@ private:
 
 	const string urlDelimiters = "_:/.?&-=#@";
 	const string realDelimiters = "%$€ºª";
+	const string emailDelimiters = "-_.";
 
 public:
 
