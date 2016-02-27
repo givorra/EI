@@ -273,7 +273,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					status = URL1;
 					npos = str.find_first_of(':', pos);
 				}
-				else if(c != '.' && isDelimiter(c))	// Si el primer caracter analizado es un delimitador, lo saltamos
+				else if(c != '.' && c != '-' && isDelimiter(c))	// Si el primer caracter analizado es un delimitador, lo saltamos
 					++pos;
 				else
 					status = REAL;
@@ -397,10 +397,10 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					status = ACRONIMO2;
 				break;
 			case ACRONIMO1:
-				if(c == '.')
-					++nLeftPointAcronim;
-				else if(isDelimiter(c))
+				if(isDelimiter(c) || c == '.')
 					status = GUION;
+				//else if(c == '.')
+				//	++nLeftPointAcronim;
 				else
 					status = ACRONIMO2;
 				break;
@@ -459,6 +459,9 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 				}
 				break;
 			case GUION:
+				//npos = pos;
+				//c = str[npos];
+				//break;
 			case NORMAL:
 				if(!isDelimiter(str[pos]))
 				{
