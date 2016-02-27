@@ -59,15 +59,13 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const
 
 	if(casosEspeciales)
 		tokenizarConCasosEspeciales(str, tokens);
-	/*
-	TCasoEspecial status = URL;
-	string token;
-	string::size_type lastPos = str.find_first_not_of(delimiters,0);
-	string::size_type pos = str.find_first_of(delimiters,lastPos);
-
-	while(string::npos != pos || string::npos != lastPos)
+	else
 	{
-		if(!casosEspeciales || !casoEspecial(str.substr(lastPos, pos+1 - lastPos), status))	// Manda token con delimitador
+		string token;
+		string::size_type lastPos = str.find_first_not_of(delimiters,0);
+		string::size_type pos = str.find_first_of(delimiters,lastPos);
+
+		while(string::npos != pos || string::npos != lastPos)
 		{
 			if(pasarAminuscSinAcentos)		// Si se convierte el string entero, solo se hace una vez
 				token = getMinusSinAcentos(str.substr(lastPos, pos - lastPos));
@@ -76,10 +74,9 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const
 
 			tokens.push_back(token);
 			lastPos = str.find_first_not_of(delimiters, pos);
-			status = INIT;
+			pos = str.find_first_of(delimiters, lastPos);
 		}
-		pos = str.find_first_of(delimiters, lastPos);
-	}*/
+	}
 }
 
 
@@ -517,6 +514,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 				}
 				else
 					++pos;
+				break;
 		}
 		if(status == TOKENIZAR)
 		{
