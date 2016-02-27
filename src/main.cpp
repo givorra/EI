@@ -25,14 +25,37 @@ int main()
 {
 	// He comentado el metodo de tokenizar para que no de error.
 
-	Tokenizador a("@.&", true, false);
+	//Tokenizador a("@.&", true, false);
 	//string s1 = "@.&";
 	list<string> lt1;
-	list<string> tokens;
+	//list<string> tokens;
 	int tam;
 
-	/* +++++++++++++++++++++++++++++ TEST ACRONIMOS ++++++++++++++++++++++++++++++++++++++++++*/
+	/* +++++++++++++++++++++++++++++ TEST GUIONES ++++++++++++++++++++++++++++++++++++++++++*/
 
+	Tokenizador a("-#", true, false);
+	list<string> tokens;
+	a.Tokenizar("MS-DOS p1 p2 UN-DOS-TRES", tokens);
+	// La lista de tokens a devolver debería contener: "MS-DOS, p1, p2, UN-DOS-TRES"
+	a.Tokenizar("pal1 -MS-DOS p1 p2", tokens);
+	// La lista de tokens a devolver debería contener: "pal1, MS-DOS, p1, p2"
+	a.Tokenizar("pal1 MS-DOS#p3 p1 p2", tokens);
+	// La lista de tokens a devolver debería contener: "pal1, MS-DOS, p3, p1, p2"
+	a.Tokenizar("pal1#MS-DOS#p3 p1 p2", tokens);
+	// La lista de tokens a devolver debería contener: "pal1, MS-DOS, p3, p1, p2"
+	a.DelimitadoresPalabra("/ ");
+	a.Tokenizar("MS-DOS p1 p2", tokens);
+	// La lista de tokens a devolver debería contener: "MS-DOS, p1, p2"
+	a.Tokenizar("pal1 -MS-DOS p1 p2", tokens);
+	// La lista de tokens a devolver debería contener: "pal1, -MS-DOS, p1, p2"
+	a.Tokenizar("pal1 MS-DOS#p3 p1 p2", tokens);
+	// La lista de tokens a devolver debería contener: "pal1, MS-DOS#p3, p1, p2"
+	a.Tokenizar("pal1#MS-DOS#p3 p1 p2", tokens);
+	// La lista de tokens a devolver debería contener: "pal1#MS-DOS#p3, p1, p2"
+	/* +++++++++++++++++++++++++++++ TEST GUIONES ++++++++++++++++++++++++++++++++++++++++++*/
+
+	/* +++++++++++++++++++++++++++++ TEST ACRONIMOS ++++++++++++++++++++++++++++++++++++++++++*/
+/*
 	a.DelimitadoresPalabra("@.&");
 
 	a.Tokenizar("U.S.A p1 e.g. p2. La", lt1);
@@ -63,7 +86,7 @@ int main()
 	a.DelimitadoresPalabra("&");
 	a.Tokenizar("a&U.S.A p1 e.g. p2. La", lt1);
 	printTokens(lt1);
-	// La lista de tokens a devolver debería contener: "a, U.S.A, p1, e.g, p2.,	La"
+	// La lista de tokens a devolver debería contener: "a, U.S.A, p1, e.g, p2.,	La"	 */
 	/* +++++++++++++++++++++++++++++ TEST ACRONIMOS ++++++++++++++++++++++++++++++++++++++++++*/
 
 	/* +++++++++++++++++++++++++++++ TEST EMAIL ++++++++++++++++++++++++++++++++++++++++++*/

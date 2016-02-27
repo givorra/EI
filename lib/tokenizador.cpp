@@ -253,11 +253,12 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 	TCasoEspecial status = URL;
 	string::size_type pos = 0;
 	string::size_type npos = 0;
-	bool exit = false;
-	bool addCero = false;
-	bool specialRealDelimiter = false;
-	int nLeftPointAcronim = 0;
-	int nRigthPointAcronim = 0;
+	bool exit 					= false;
+	bool addCero 				= false;
+	bool specialRealDelimiter 	= false;
+	int nLeftPointAcronim 		= 0;
+	int nRigthPointAcronim 		= 0;
+	int nRigthGuionGuion 		= 0;
 
 	while(!exit)
 	{
@@ -273,7 +274,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					status = URL1;
 					npos = str.find_first_of(':', pos);
 				}
-				else if(c != '.' && c != '-' && isDelimiter(c))	// Si el primer caracter analizado es un delimitador, lo saltamos
+				else if(c != '.' && c != ',' && isDelimiter(c))	// Si el primer caracter analizado es un delimitador, lo saltamos
 					++pos;
 				else
 					status = REAL;
@@ -353,13 +354,10 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 				c = str[npos];
 				if(c == '@')
 					status = EMAIL2;
-				else
-					status = EMAIL1;
-				/*if(c >= 'a' && c <= 'z')
-					status = EMAIL1;
-				else
+				else if(isDelimiter(c))		// PROBAR ESTO
 					status = ACRONIMO;
-				break;*/
+				else
+					status = EMAIL1;
 				break;
 			case EMAIL1:
 				if(c == '@')
@@ -393,6 +391,8 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					++nLeftPointAcronim;
 					status = ACRONIMO1;
 				}
+				else if(isDelimiter(c))
+					status = GUION;
 				else
 					status = ACRONIMO2;
 				break;
@@ -412,8 +412,6 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 				}
 				else if(isDelimiter(c))
 					status = GUION;
-				//else
-				//	status = GUION;
 				break;
 			case ACRONIMO3:
 				if(c == '.')
@@ -459,9 +457,57 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 				}
 				break;
 			case GUION:
-				//npos = pos;
-				//c = str[npos];
-				//break;
+				npos = pos;
+				c = str[npos];
+				if(isDelimiter(c))
+					status = NORMAL;
+				else
+					status = GUION1;
+				break;
+			case GUION1:
+				//if(c != '-' && isDelimiter(c))
+				if(c == '-')
+					status = GUION2;
+				else if(isDelimiter(c))
+					status = NORMAL;
+				break;
+			case GUION2:
+				if(c == '-' || isDelimiter(c))
+					status = NORMAL;
+				else
+					status = GUION3;
+				break;
+			case GUION3:
+				if(c == '-')
+				{
+					++nRigthGuionGuion;
+					status = GUION4;
+				}
+				else if(isDelimiter(c))
+					status = TOKENIZARGUION;
+				break;
+			case GUION4:
+				if(c == '-')
+				{
+					++nRigthGuionGuion;
+					status = GUION5;
+				}
+				else if(isDelimiter(c))
+					status = TOKENIZARGUION;
+				else
+				{
+					--nRigthGuionGuion;
+					status = GUION3;
+				}
+				break;
+			case GUION5:
+				if(c == '-')
+					++nRigthGuionGuion;
+				else if(isDelimiter(c))
+					status = TOKENIZARGUION;
+				else
+					status = NORMAL;
+				break;
 			case NORMAL:
 				if(!isDelimiter(str[pos]))
 				{
@@ -474,14 +520,16 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 		}
 		if(status == TOKENIZAR)
 		{
-			cout <<"--"<< str.substr(pos, npos-pos) << endl;
 			tokens.push_back(str.substr(pos, npos-pos));
-			status = URL;
-			pos = npos+1;
-			addCero = false;
-			specialRealDelimiter = false;
-			nLeftPointAcronim = 0;
-			nRigthPointAcronim = 0;
+			cout <<"--"+tokens.back() << endl;
+
+			status 					= URL;
+			pos 					= npos+1;
+			addCero 				= false;
+			specialRealDelimiter 	= false;
+			nLeftPointAcronim 		= 0;
+			nRigthPointAcronim 		= 0;
+			nRigthGuionGuion		= 0;
 
 			//if(str[npos] == '\0')
 			if(npos >= str.length())
@@ -501,12 +549,13 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			if(specialRealDelimiter == true)	// Si ha encontrado un realDelimiter retrocede una posicion para prodesarlo a parte
 				--npos;
 
-			status = URL;
-			pos = npos+1;
-			addCero = false;
-			specialRealDelimiter = false;
-			nLeftPointAcronim = 0;
-			nRigthPointAcronim = 0;
+			status 					= URL;
+			pos 					= npos+1;
+			addCero 				= false;
+			specialRealDelimiter 	= false;
+			nLeftPointAcronim 		= 0;
+			nRigthPointAcronim 		= 0;
+			nRigthGuionGuion		= 0;
 
 
 			if(str[npos] == '\0')
@@ -516,15 +565,34 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 		{
 			tokens.push_back(str.substr(pos+nLeftPointAcronim, (npos-nRigthPointAcronim) - (pos+nLeftPointAcronim)));
 			cout <<"--"+tokens.back() << endl;
-			status = URL;
-			pos = npos+1;
-			addCero = false;
-			specialRealDelimiter = false;
-			nLeftPointAcronim = 0;
-			nRigthPointAcronim = 0;
+
+			status 					= URL;
+			pos 					= npos+1;
+			addCero 				= false;
+			specialRealDelimiter 	= false;
+			nLeftPointAcronim 		= 0;
+			nRigthPointAcronim 		= 0;
+			nRigthGuionGuion		= 0;
 
 			if(str[npos] == '\0')
 				exit = true;
+		}
+		else if(status == TOKENIZARGUION)
+		{
+			tokens.push_back(str.substr(pos, (npos-nRigthGuionGuion) - pos));
+			cout <<"--"+tokens.back() << endl;
+
+			status 					= URL;
+			pos 					= npos+1;
+			addCero 				= false;
+			specialRealDelimiter 	= false;
+			nLeftPointAcronim 		= 0;
+			nRigthPointAcronim 		= 0;
+			nRigthGuionGuion		= 0;
+
+			if(str[npos] == '\0')
+				exit = true;
+
 		}
 		if(npos != string::npos)
 			++npos;
