@@ -46,6 +46,7 @@ private:
 	bool casosEspeciales;
 	// Si true pasará el to
 	bool pasarAminuscSinAcentos;
+	// Para eliminar
 
 	//TCasoEspecial status;
 	//string specialCaseToken;
@@ -56,7 +57,7 @@ private:
 	bool isDelimiter(char c) const;
 
 	const string urlDelimiters = "_:/.?&-=#@";
-	const string realDelimiters = "%$€ºª";
+	const string realDelimiters = "%$ºª";
 	const string emailDelimiters = "-_.";
 
 public:
@@ -73,20 +74,20 @@ public:
 	~Tokenizador();
 
 	// Cambia la variable privada “casosEspeciales”
-	void CasosEspeciales (const bool& nuevoCasosEspeciales);
+	void CasosEspeciales(const bool& nuevoCasosEspeciales);
 	// Devuelve el contenido de la variable privada “casosEspeciales”
-	bool CasosEspeciales ();
+	bool CasosEspeciales();
 	/* Cambia la variable privada “pasarAminuscSinAcentos”. Atención al
 	formato de codificación del corpus (comando “file” de Linux). Para la
 	corrección de la práctica se utilizará el formato actual (ISO-8859).
 	*/
-	void PasarAminuscSinAcentos (const bool& nuevoPasarAminuscSinAcentos);
+	void PasarAminuscSinAcentos(const bool& nuevoPasarAminuscSinAcentos);
 
 	// Devuelve el contenido de la variable privada “pasarAminuscSinAcentos”
-	bool PasarAminuscSinAcentos ();
+	bool PasarAminuscSinAcentos();
 
 
-	Tokenizador& operator= (const Tokenizador&); // Construye una copia
+	Tokenizador& operator=(const Tokenizador&); // Construye una copia
 
 	// Tokeniza str devolviendo el resultado en tokens. La lista tokens se
 	// vaciará antes de almacenar el resultado de la tokenización
@@ -96,7 +97,7 @@ public:
 	//palabra en cada línea del fichero). Devolverá true si se realiza la
 	//tokenización de forma correcta enviando a cerr el mensaje
 	//correspondiente (p.ej. que no exista el archivo i)
-	bool Tokenizar (const string& i, const string& f) const;
+	bool Tokenizar(const string& i, const string& f) const;
 
 	// Tokeniza el fichero i guardando la salida en un fichero de nombre i
 	//añadiéndole extensión .tk (sin eliminar previamente la extensión de i
@@ -104,7 +105,7 @@ public:
 	//y que contendrá una palabra en cada línea del fichero. Devolverá true si
 	//de realiza la tokenización de forma correcta enviando a cerr el mensaje
 	//correspondiente (p.ej. que no exista el archivo i)
-	bool Tokenizar (const string & i) const;
+	bool Tokenizar(const string & i) const;
 
 	/* Tokeniza el fichero i que contiene un nombre de fichero por línea
 	guardando la salida en un fichero cuyo nombre será el de entrada
@@ -113,7 +114,7 @@ public:
 	de todos los archivos que contiene i; devolverá false en caso contrario
 	enviando a cerr el mensaje correspondiente (p.ej. que no exista el
 	archivo i, o bien enviando a “cerr” los archivos de i que no existan)*/
-	bool TokenizarListaFicheros (const string& i) const;
+	bool TokenizarListaFicheros(const string& i) const;
 
 	/* Tokeniza todos los archivos que contenga el directorio i, incluyendo
 	los de los subdirectorios, guardando la salida en ficheros cuyo nombre
@@ -122,7 +123,7 @@ public:
 	tokenización de forma correcta de todos los archivos; devolverá false en
 	caso contrario enviando a cerr el mensaje correspondiente (p.ej. que no
 	exista el directorio i, o los ficheros que no se hayan podido tokenizar)*/
-	bool TokenizarDirectorio (const string& i) const;
+	bool TokenizarDirectorio(const string& i) const;
 
 	// Cambia “delimiters” por “nuevoDelimiters”
 	void DelimitadoresPalabra(const string& nuevoDelimiters);

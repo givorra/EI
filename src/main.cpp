@@ -1,15 +1,55 @@
-/*
- * main.cpp
- *
- *  Created on: 29/01/2016
- *      Author: gir4
- */
+#include <fstream>
+
+#include <iostream>
+#include <string>
+#include <list>
 #include "tokenizador.h"
 
 using namespace std;
 
-#include <iostream>
-#include <fstream>
+///////// Comprobación de que vacíe la lista resultado
+
+void imprimirListaSTL(const list<string>& cadena)
+{
+        list<string>::const_iterator itCadena;
+        for(itCadena=cadena.begin();itCadena!=cadena.end();itCadena++)
+        {
+                cout << (*itCadena) << "\t";
+        }
+        cout << endl;
+}
+
+int
+main(void)
+{
+	bool kCasosEspeciales = true, kpasarAminusculas = false;
+
+	list<string> lt1, lt2;
+
+Tokenizador a("-#", true, false);
+list<string> tokens;
+
+a.DelimitadoresPalabra("@.,&");
+ifstream myfile ("test.txt");
+string s1;
+getline(myfile,s1);
+cout << s1 << endl;
+myfile.close();
+
+a.Tokenizar(s1, tokens);
+// La lista de tokens a devolver debería contener: "pal1	10.35	%	10,35	%	23.000,3	%	23	¤	23.05	¤	23,05	¤	11	$	11.05	$	3	º	4	ª"
+	imprimirListaSTL(tokens);
+
+
+
+}
+
+
+
+
+
+
+
 
 void printTokens(list<string>& tokens)
 {
@@ -20,7 +60,7 @@ void printTokens(list<string>& tokens)
 		tokens.pop_front();
 	}
 }
-
+/*
 int main()
 {
 	// He comentado el metodo de tokenizar para que no de error.
@@ -32,7 +72,7 @@ int main()
 	int tam;
 
 	/* +++++++++++++++++++++++++++++ TEST GUIONES ++++++++++++++++++++++++++++++++++++++++++*/
-
+/*
 	Tokenizador a("-#", true, false);
 	list<string> tokens;
 	a.Tokenizar("MS-DOS p1 p2 UN-DOS-TRES", tokens);
@@ -52,6 +92,8 @@ int main()
 	// La lista de tokens a devolver deberÃ­a contener: "pal1, MS-DOS#p3, p1, p2"
 	a.Tokenizar("pal1#MS-DOS#p3 p1 p2", tokens);
 	// La lista de tokens a devolver deberÃ­a contener: "pal1#MS-DOS#p3, p1, p2"
+
+	 */
 	/* +++++++++++++++++++++++++++++ TEST GUIONES ++++++++++++++++++++++++++++++++++++++++++*/
 
 	/* +++++++++++++++++++++++++++++ TEST ACRONIMOS ++++++++++++++++++++++++++++++++++++++++++*/
@@ -121,8 +163,9 @@ int main()
 	*/
 	// ++++++++++++++++++++++++++++ TEST EMAIL +++++++++++++++++++++++++++++++++++++ */
 	// **************************** PRUEBA DE PASAR A MINUSCULAS *******************************/
-	/*
-
+/*
+	Tokenizador tc;
+	string s1;
 	ifstream myfile ("test.txt");
 	getline(myfile,s1);
 	myfile.close();
@@ -130,7 +173,7 @@ int main()
 	string auxtoken = tc.getMinusSinAcentos(s1);
 
 	cout << s1 << "\n" << auxtoken << "\n";
-	*/
+*/
 	// **************************** PRUEBA DE PASAR A MINUSCULAS *******************************/
 	//cout << t.DelimitadoresPalabra() << endl;
 	//t.DelimitadoresPalabra("/.:;&+M");
@@ -210,5 +253,5 @@ int main()
 	a.Tokenizar("...10.000.a.000 ,,23.05 10/12/85 1,23E+10", lt1);
 	// La lista de tokens a devolver deberÃ­a contener: "...10.000.a.000	,,23.05	10/12/85 1,23E+10"
 	 * */
-}
+//}
 

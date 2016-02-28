@@ -165,20 +165,15 @@ void Tokenizador::DelimitadoresPalabra(const string& nuevoDelimiters)
 
 void Tokenizador::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters)
 {
-	//sort(nuevoDelimiters.begin(), nuevoDelimiters.end());
-
-	char lastDelimiter = 0;
 
 	for(int i = 0; i < nuevoDelimiters.size(); i++)
 	{
-		if(nuevoDelimiters[i] != lastDelimiter && delimiters.find(nuevoDelimiters[i]) != string::npos)
+		if(delimiters.find(nuevoDelimiters[i]) == string::npos)
 			delimiters += nuevoDelimiters[i];
-
-		lastDelimiter = nuevoDelimiters[i];
 	}
 }
 
-inline string Tokenizador::DelimitadoresPalabra() const
+string Tokenizador::DelimitadoresPalabra() const
 {
 	return delimiters;
 }
@@ -189,23 +184,22 @@ ostream& operator<<(ostream& o, const Tokenizador& t)
 	return o;
 }
 
-//if(!casosEspeciales || casoEspecial(c))
-inline void Tokenizador::CasosEspeciales(const bool& nuevoCasosEspeciales)
+void Tokenizador::CasosEspeciales(const bool& nuevoCasosEspeciales)
 {
 	casosEspeciales = nuevoCasosEspeciales;
 }
 
-inline bool Tokenizador::CasosEspeciales()
+bool Tokenizador::CasosEspeciales()
 {
 	return casosEspeciales;
 }
 
-inline void Tokenizador::PasarAminuscSinAcentos(const bool& nuevoPasarAminuscSinAcentos)
+void Tokenizador::PasarAminuscSinAcentos(const bool& nuevoPasarAminuscSinAcentos)
 {
 	pasarAminuscSinAcentos = nuevoPasarAminuscSinAcentos;
 }
 
-inline bool Tokenizador::PasarAminuscSinAcentos()
+bool Tokenizador::PasarAminuscSinAcentos()
 {
 	return pasarAminuscSinAcentos;
 }
@@ -250,6 +244,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 	TCasoEspecial status = URL;
 	string::size_type pos = 0;
 	string::size_type npos = 0;
+	string token;
 	bool exit 					= false;
 	bool addCero 				= false;
 	bool specialRealDelimiter 	= false;
@@ -271,6 +266,8 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					status = URL1;
 					npos = str.find_first_of(':', pos);
 				}
+				else if(c == '\0')
+					exit = true;
 				else if(c != '.' && c != ',' && isDelimiter(c))	// Si el primer caracter analizado es un delimitador, lo saltamos
 					++pos;
 				else
@@ -518,67 +515,35 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 		}
 		if(status == TOKENIZAR)
 		{
-			tokens.push_back(str.substr(pos, npos-pos));
-			cout <<"--"+tokens.back() << endl;
-
-			status 					= URL;
-			pos 					= npos+1;
-			addCero 				= false;
-			specialRealDelimiter 	= false;
-			nLeftPointAcronim 		= 0;
-			nRigthPointAcronim 		= 0;
-			nRigthGuionGuion		= 0;
-
-			//if(str[npos] == '\0')
-			if(npos >= str.length())
-				exit = true;
+			token = str.substr(pos, npos-pos);
 		}
 		else if(status == TOKENIZARREAL)
 		{
-
 			if(addCero)
-			{
-				tokens.push_back("0"+str.substr(pos, npos-pos));
-			}
+				token = "0"+str.substr(pos, npos-pos);
 			else
-				tokens.push_back(str.substr(pos, npos-pos));
-			cout <<"--"+tokens.back() << endl;
+				token = str.substr(pos, npos-pos);
 
 			if(specialRealDelimiter == true)	// Si ha encontrado un realDelimiter retrocede una posicion para prodesarlo a parte
 				--npos;
-
-			status 					= URL;
-			pos 					= npos+1;
-			addCero 				= false;
-			specialRealDelimiter 	= false;
-			nLeftPointAcronim 		= 0;
-			nRigthPointAcronim 		= 0;
-			nRigthGuionGuion		= 0;
-
-
-			if(str[npos] == '\0')
-				exit = true;
 		}
 		else if(status == TOKENIZARACRONIMO)
 		{
-			tokens.push_back(str.substr(pos+nLeftPointAcronim, (npos-nRigthPointAcronim) - (pos+nLeftPointAcronim)));
-			cout <<"--"+tokens.back() << endl;
-
-			status 					= URL;
-			pos 					= npos+1;
-			addCero 				= false;
-			specialRealDelimiter 	= false;
-			nLeftPointAcronim 		= 0;
-			nRigthPointAcronim 		= 0;
-			nRigthGuionGuion		= 0;
-
-			if(str[npos] == '\0')
-				exit = true;
+			token = str.substr(pos+nLeftPointAcronim, (npos-nRigthPointAcronim) - (pos+nLeftPointAcronim));
 		}
 		else if(status == TOKENIZARGUION)
 		{
-			tokens.push_back(str.substr(pos, (npos-nRigthGuionGuion) - pos));
-			cout <<"--"+tokens.back() << endl;
+			token = str.substr(pos, (npos-nRigthGuionGuion) - pos);
+		}
+
+		if(status >= TOKENIZAR && status <= TOKENIZARGUION)
+		{
+			if(pasarAminuscSinAcentos)
+				tokens.push_back(getMinusSinAcentos(token));
+			else
+				tokens.push_back(token);
+
+			//cout << tokens.back() << "\n";
 
 			status 					= URL;
 			pos 					= npos+1;
@@ -588,9 +553,8 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			nRigthPointAcronim 		= 0;
 			nRigthGuionGuion		= 0;
 
-			if(str[npos] == '\0')
+			if(str[npos] == '\0' || npos >= str.length())
 				exit = true;
-
 		}
 		if(npos != string::npos)
 			++npos;
@@ -616,8 +580,8 @@ bool Tokenizador::isDelimiter(char c) const
 
 bool Tokenizador::findRealDelimiters(char c) const
 {
-	//if(c == '€')
-	//	return true;
+	if(c == 164)	// Simbolo € en codificacion ISO-8859-15
+		return true;
 	if(realDelimiters.find(c) != string::npos)
 		return true;
 	else

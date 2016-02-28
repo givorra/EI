@@ -11,6 +11,8 @@ TokenizadorClase::TokenizadorClase()
 {
 	delimiters=",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t\n\r@";
 }
+TokenizadorClase::TokenizadorClase(const string& delimitadoresPalabra):delimiters(delimitadoresPalabra)
+{}
 
 TokenizadorClase::~TokenizadorClase()
 {
