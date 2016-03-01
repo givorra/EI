@@ -14,7 +14,7 @@ void imprimirListaSTL(const list<string>& cadena)
         list<string>::const_iterator itCadena;
         for(itCadena=cadena.begin();itCadena!=cadena.end();itCadena++)
         {
-                cout << (*itCadena) << "\t";
+                cout << (*itCadena) << ", ";
         }
         cout << endl;
 }
@@ -29,20 +29,22 @@ main(void)
 Tokenizador a("-#", true, false);
 list<string> tokens;
 
-a.DelimitadoresPalabra("@.,&");
-ifstream myfile ("test.txt");
-string s1;
-getline(myfile,s1);
-cout << s1 << endl;
-myfile.close();
+a.DelimitadoresPalabra("@.&");
+a.Tokenizar("pal1 cat@iuii.ua.es@cd p1 p2", tokens);
+// La lista de tokens a devolver debería contener: "pal1, cat, iuii.ua.es, cd, p1, p2"
+	imprimirListaSTL(tokens);
 
-a.Tokenizar(s1, tokens);
-// La lista de tokens a devolver debería contener: "pal1	10.35	%	10,35	%	23.000,3	%	23	¤	23.05	¤	23,05	¤	11	$	11.05	$	3	º	4	ª"
+
+a.DelimitadoresPalabra("&.");
+a.Tokenizar("pal1 cat@iuii.ua.es@cd p1 p2", tokens);
+// La lista de tokens a devolver debería contener: "pal1, cat@iuii, ua, es@cd, p1, p2"
 	imprimirListaSTL(tokens);
 
 
 
+
 }
+
 
 
 
