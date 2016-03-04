@@ -54,7 +54,7 @@ Tokenizador& Tokenizador::operator= (const Tokenizador& t)
 void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const
 {
 	// Limpiamos lista de tokens
-	if(tokens.size() > 0)
+	if(!tokens.empty())
 		tokens.clear();
 
 	if(casosEspeciales)
@@ -79,7 +79,6 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const
 	}
 }
 
-
 bool Tokenizador::Tokenizar(const string& NomFichEntr, const string& NomFichSal) const
 {
 	ifstream i;
@@ -87,10 +86,12 @@ bool Tokenizador::Tokenizar(const string& NomFichEntr, const string& NomFichSal)
 	string cadena;
 	list<string> tokens;
 	i.open(NomFichEntr.c_str());
+	f.open(NomFichSal.c_str());
+	list<string>::iterator itS;
 
 	if(!i)
 	{
-		cerr << "Error: No existe el archivo: " << NomFichEntr << endl;
+		cerr << "ERROR: No existe el archivo: " << NomFichEntr << "\n";
 		return false;
 	}
 	else
@@ -102,21 +103,20 @@ bool Tokenizador::Tokenizar(const string& NomFichEntr, const string& NomFichSal)
 			if(cadena.length()!=0)
 			{
 				Tokenizar(cadena, tokens);
+
+				for(itS = tokens.begin(); itS != tokens.end(); itS++)
+				{
+					f << (*itS) << "\n";
+				}
 			}
 		}
 	}
 
 	i.close();
-	f.open(NomFichSal.c_str());
-	list<string>::iterator itS;
-
-	for(itS = tokens.begin(); itS != tokens.end(); itS++)
-	{
-		f << (*itS) << endl;
-	}
 	f.close();
 	if(!tokens.empty())
 		tokens.clear();
+
 	return true;
 }
 
@@ -132,28 +132,26 @@ bool Tokenizador::TokenizarDirectorio(const string& dirAIndexar) const
 	else
 	{
 		// Hago una lista en un fichero con find>fich
-		string cmd="find "+dirAIndexar+" -follow |sort > .lista_fich";
+		string cmd="find "+dirAIndexar+" -follow -type f|sort > .lista_fich";
 		system(cmd.c_str());
 		return TokenizarListaFicheros(".lista_fich");
 	}
 }
 
-// Probar metodo
 bool Tokenizador::TokenizarListaFicheros(const string& i) const
 {
 	bool result = true;
-	char separator = '\n';
-	istringstream buf(i);
 	string token;
+	fstream f(i);
 
-	while(getline(buf, token, separator))
+	getline(f, token);
+
+	while(!f.eof())
 	{
-		istringstream buf2(token);
-		string nombreFich;
-		getline(buf2, nombreFich, '.');
-
-		if (!Tokenizar(token, nombreFich+".tk"))
+		if (!Tokenizar(token, token+".tk"))
 			result = false;
+
+		getline(f, token);
 	}
 	return result;
 }
@@ -166,7 +164,7 @@ void Tokenizador::DelimitadoresPalabra(const string& nuevoDelimiters)
 void Tokenizador::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters)
 {
 
-	for(int i = 0; i < nuevoDelimiters.size(); i++)
+	for(unsigned int i = 0; i < nuevoDelimiters.size(); i++)
 	{
 		if(delimiters.find(nuevoDelimiters[i]) == string::npos)
 			delimiters += nuevoDelimiters[i];
@@ -208,7 +206,7 @@ string Tokenizador::getMinusSinAcentos(const string& token) const
 {
 	string auxToken = "";
 
-	for(int i = 0; i < token.size(); i++)
+	for(unsigned int i = 0; i < token.size(); i++)
 	{
 		switch((unsigned char)token[i])
 		{	// Codifiacion ISO-8859
@@ -227,6 +225,9 @@ string Tokenizador::getMinusSinAcentos(const string& token) const
 			case 250: case 218:
 				auxToken += 'u';
 				break;
+			case 209:
+				auxToken += 'ñ';
+				break;
 			default:
 				if(token[i] >= 'A' && token[i] <= 'Z')
 					auxToken += tolower(token[i]);
@@ -242,6 +243,7 @@ string Tokenizador::getMinusSinAcentos(const string& token) const
 void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& tokens) const
 {
 	TCasoEspecial status = URL;
+	char c;
 	string::size_type pos = 0;
 	string::size_type npos = 0;
 	string token;
@@ -254,7 +256,10 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 
 	while(!exit)
 	{
-		char c = str[npos];
+		if(npos >= str.length())
+			c = '\0';
+		else
+			c = str[npos];
 		switch(status)
 		{
 			case URL:
@@ -346,9 +351,9 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			case EMAIL:
 				npos = pos;
 				c = str[npos];
-				if(c == '@')
-					status = EMAIL2;
-				else if(isDelimiter(c))		// PROBAR ESTO
+				//if(c == '@')
+				//	status = EMAIL2;
+				if(isDelimiter(c))		// PROBAR ESTO
 					status = ACRONIMO;
 				else
 					status = EMAIL1;
@@ -367,7 +372,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 				else if(emailDelimiters.find(c) != string::npos)
 					status = EMAIL3;
 				else if(isDelimiter(c))
-					status = EMAIL3;
+					status = TOKENIZAR;
 				break;
 			case EMAIL3:
 				if(c == '@')
@@ -415,7 +420,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 				}
 				else if(!isDelimiter(c))
 				{
-					--nRigthPointAcronim;;
+					--nRigthPointAcronim;
 					status = ACRONIMO5;
 				}
 				else	// Delimitador
@@ -510,15 +515,20 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 					break;
 				}
 				else
+				{
+					nLeftPointAcronim = 0;
+					status = URL;
+					npos = pos;
 					++pos;
+				}
 				break;
 		}
-		if(status == TOKENIZAR)
+		switch(status)
 		{
+		case TOKENIZAR:
 			token = str.substr(pos, npos-pos);
-		}
-		else if(status == TOKENIZARREAL)
-		{
+			break;
+		case TOKENIZARREAL:
 			if(addCero)
 				token = "0"+str.substr(pos, npos-pos);
 			else
@@ -526,14 +536,13 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 
 			if(specialRealDelimiter == true)	// Si ha encontrado un realDelimiter retrocede una posicion para prodesarlo a parte
 				--npos;
-		}
-		else if(status == TOKENIZARACRONIMO)
-		{
+			break;
+		case TOKENIZARACRONIMO:
 			token = str.substr(pos+nLeftPointAcronim, (npos-nRigthPointAcronim) - (pos+nLeftPointAcronim));
-		}
-		else if(status == TOKENIZARGUION)
-		{
+			break;
+		case TOKENIZARGUION:
 			token = str.substr(pos, (npos-nRigthGuionGuion) - pos);
+			break;
 		}
 
 		if(status >= TOKENIZAR && status <= TOKENIZARGUION)
@@ -580,7 +589,7 @@ bool Tokenizador::isDelimiter(char c) const
 
 bool Tokenizador::findRealDelimiters(char c) const
 {
-	if(c == 164)	// Simbolo â‚¬ en codificacion ISO-8859-15
+	if((unsigned char)c == 164)	// Simbolo euro en codificacion ISO-8859-15
 		return true;
 	if(realDelimiters.find(c) != string::npos)
 		return true;

@@ -48,10 +48,12 @@ bool TokenizadorClase::Tokenizar(const string& NomFichEntr, const string& NomFic
 	string cadena;
 	list<string> tokens;
 	i.open(NomFichEntr.c_str());
+	f.open(NomFichSal.c_str());
+	list<string>::iterator itS;
 
 	if(!i)
 	{
-		cerr << "Error: No existe el archivo: " << NomFichEntr << endl;
+		cerr << "ERROR: No existe el archivo: " << NomFichEntr << "\n";
 		return false;
 	}
 	else
@@ -62,20 +64,20 @@ bool TokenizadorClase::Tokenizar(const string& NomFichEntr, const string& NomFic
 			getline(i, cadena);
 			if(cadena.length()!=0)
 			{
-				Tokenizar(cadena, tokens);
+				(*this).Tokenizar(cadena, tokens);
+
+				for(itS = tokens.begin(); itS != tokens.end(); itS++)
+				{
+					f << (*itS) << "\n";
+				}
 			}
 		}
 	}
 
 	i.close();
-	f.open(NomFichSal.c_str());
-	list<string>::iterator itS;
-
-	for(itS = tokens.begin(); itS != tokens.end(); itS++)
-	{
-		f << (*itS) << endl;
-	}
 	f.close();
+	if(!tokens.empty())
+		tokens.clear();
 
 	return true;
 }
@@ -98,15 +100,17 @@ bool TokenizadorClase::TokenizarDirectorio(const string& dirAIndexar) const
 	}
 }
 
-// Probar metodo
 bool TokenizadorClase::TokenizarListaFicheros(const string& i) const
 {
 	bool result = true;
-	char separator = '\n';
-	istringstream buf(i);
+	//char separator = '\n';
 	string token;
+	fstream f(i);
 
-	while(getline(buf, token, separator))
+	getline(f, token);
+	istringstream buf(token);
+
+	while(getline(f, token))
 	{
 		istringstream buf2(token);
 		string nombreFich;
@@ -123,34 +127,13 @@ void TokenizadorClase::DelimitadoresPalabra(const string& nuevoDelimiters)
 	delimiters = nuevoDelimiters;
 }
 
-/*void TokenizadorClase::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters)
-{
-	string auxDelimiters = delimiters + nuevoDelimiters;
-	sort(delimiters.begin(), delimiters.end());
-	delimiters = "";
-
-	char lastDelimiter = '';
-
-	for(int i = 0; i < auxDelimiters.size(); i++)
-	{
-		if(auxDelimiters[i] != lastDelimiter)
-			delimiters += auxDelimiters[i];
-
-		lastDelimiter = auxDelimiters[i];
-	}
-}*/
 void TokenizadorClase::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters)
 {
-	//sort(nuevoDelimiters.begin(), nuevoDelimiters.end());
 
-	char lastDelimiter = 0;
-
-	for(int i = 0; i < nuevoDelimiters.size(); i++)
+	for(unsigned int i = 0; i < nuevoDelimiters.size(); i++)
 	{
-		if(nuevoDelimiters[i] != lastDelimiter && !delimiters.find(nuevoDelimiters[i]))
+		if(delimiters.find(nuevoDelimiters[i]) == string::npos)
 			delimiters += nuevoDelimiters[i];
-
-		lastDelimiter = nuevoDelimiters[i];
 	}
 }
 

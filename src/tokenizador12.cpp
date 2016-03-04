@@ -23,23 +23,23 @@ void testURL()
     string s = "p0 http://intime.dlsi.ua.es:8080/dossierct/index.jsp?lang=es&status=probable&date=22-01-2013&newspaper=catedraTelefonicaUA@iuii.ua.es p1 p2";
     a.Tokenizar(s, tokens);
     imprimirListaSTL(tokens);
-    // La lista de tokens a devolver debería contener:
+    // La lista de tokens a devolver debería contener: 
     //" p0, http://intime.dlsi.ua.es:8080/dossierct/index.jsp?lang=es&status=probable&date=22-01-2013&newspaper=catedraTelefonicaUA@iuii.ua.es, p1, p2"
     a.DelimitadoresPalabra("/ ");
     a.Tokenizar(s, tokens);
     imprimirListaSTL(tokens);
-    // La lista de tokens a devolver debería contener:
+    // La lista de tokens a devolver debería contener: 
     //" p0, http://intime.dlsi.ua.es:8080/dossierct/index.jsp?lang=es&status=probable&date=22-01-2013&newspaper=catedraTelefonicaUA@iuii.ua.es, p1, p2"
     a.DelimitadoresPalabra("/ &");
     a.Tokenizar(s, tokens);
     imprimirListaSTL(tokens);
-    // La lista de tokens a devolver debería contener:
+    // La lista de tokens a devolver debería contener: 
     //" p0, http://intime.dlsi.ua.es:8080/dossierct/index.jsp?lang=es&status=probable&date=22-01-2013&newspaper=catedraTelefonicaUA@iuii.ua.es, p1, p2"
     a.DelimitadoresPalabra("/&");
     s = "p0 hhttp://intime.dlsi.ua.es:8080/dossierct/index.jsp?lang=es&status=probable&date=22-01-2013 p1 p2";
     a.Tokenizar(s, tokens);
     imprimirListaSTL(tokens);
-    // La lista de tokens a devolver debería contener:
+    // La lista de tokens a devolver debería contener: 
     //" p0, hhttp:, intime.dlsi.ua.es:8080, dossierct, index.jsp?lang=es, status=probable, date=22-01-2013, p1, p2"
 }
 
@@ -117,22 +117,22 @@ void testACRONIMOS()
 
     Tokenizador a(",", true, false);
     list<string> lt1;
-    a.DelimitadoresPalabra("@.&");/*
+    a.DelimitadoresPalabra("@.&");
     a.Tokenizar("U.S.A p1 e.g. p2. La", lt1);
     imprimirListaSTL(lt1);
     // La lista de tokens a devolver debería contener: "U.S.A, p1, e.g, p2, La"
     a.Tokenizar("U..S.A p1 e..g. p2. La", lt1);
     imprimirListaSTL(lt1);
     // La lista de tokens a devolver debería contener: "U, S.A, p1, e, g, p2, La"
-*/
+
     a.Tokenizar("...U.S.A p1 e..g. p2. La", lt1);
     imprimirListaSTL(lt1);
-    /*
+
     // La lista de tokens a devolver debería contener: "U.S.A, p1, e, g, p2, La"
     a.Tokenizar("Hack.4.Good p1 ", lt1);
     imprimirListaSTL(lt1);
-
-    // La lista de tokens a devolver debería contener: "Hack.4.Good, p1"
+/*
+    // La lista de tokens a devolver debería contener: "Hack.4.Good, p1" 
 
     a.DelimitadoresPalabra("");
     a.Tokenizar("U.S.A .U.S.A .p1 p1 e.g. p2. La", lt1);

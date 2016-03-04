@@ -30,7 +30,9 @@ enum TCasoEspecial
 	GUION, GUION1, GUION2, GUION3, GUION4, GUION5, NORMAL
 };
 
-
+const string urlDelimiters = "_:/.?&-=#@";
+const string realDelimiters = "%$ªº";
+const string emailDelimiters = "-_.";
 
 class Tokenizador {
 	friend ostream& operator<<(ostream&, const Tokenizador&);
@@ -55,10 +57,6 @@ private:
 	string getDelimiters() const;
 	bool findRealDelimiters(char c) const;
 	bool isDelimiter(char c) const;
-
-	const string urlDelimiters = "_:/.?&-=#@";
-	const string realDelimiters = "%$ÂºÂª";
-	const string emailDelimiters = "-_.";
 
 public:
 

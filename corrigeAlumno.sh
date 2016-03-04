@@ -22,7 +22,7 @@ MAKE1=makefile
 # Fichero que contiene el main en el makefile
 MAIN=tad.cpp
 # Nombre del ejecutable en el makefile
-EJE=tad
+EJE=practica1
 #################################################
 
 # Directorio raiz

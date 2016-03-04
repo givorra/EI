@@ -29,7 +29,7 @@ list<string> tokens;
 
 a.DelimitadoresPalabra("@.&");
 a.Tokenizar("pal1 cat@iuii.ua.es@cd p1 p2", tokens);
-// La lista de tokens a devolver debería contener: "pal1, cat, iuii.ua.es@cd, p1, p2"
+// La lista de tokens a devolver debería contener: "pal1, cat, iuii.ua.es, cd, p1, p2"
 	imprimirListaSTL(tokens);
 
 
