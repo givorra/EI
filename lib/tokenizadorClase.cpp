@@ -30,6 +30,9 @@ TokenizadorClase& TokenizadorClase::operator= (const TokenizadorClase& t)
 
 void TokenizadorClase::Tokenizar(const string& str, list<string>& tokens) const
 {
+	if(!tokens.empty())
+		tokens.clear();
+
 	string::size_type lastPos = str.find_first_not_of(delimiters,0);
 	string::size_type pos = str.find_first_of(delimiters,lastPos);
 
@@ -39,6 +42,11 @@ void TokenizadorClase::Tokenizar(const string& str, list<string>& tokens) const
 		lastPos = str.find_first_not_of(delimiters, pos);
 		pos = str.find_first_of(delimiters, lastPos);
 	}
+}
+
+bool TokenizadorClase::Tokenizar(const string & i) const
+{
+	return Tokenizar(i, i+".tk");
 }
 
 bool TokenizadorClase::Tokenizar(const string& NomFichEntr, const string& NomFichSal) const
@@ -64,7 +72,7 @@ bool TokenizadorClase::Tokenizar(const string& NomFichEntr, const string& NomFic
 			getline(i, cadena);
 			if(cadena.length()!=0)
 			{
-				(*this).Tokenizar(cadena, tokens);
+				Tokenizar(cadena, tokens);
 
 				for(itS = tokens.begin(); itS != tokens.end(); itS++)
 				{
@@ -94,7 +102,7 @@ bool TokenizadorClase::TokenizarDirectorio(const string& dirAIndexar) const
 	else
 	{
 		// Hago una lista en un fichero con find>fich
-		string cmd="find "+dirAIndexar+" -follow |sort > .lista_fich";
+		string cmd="find "+dirAIndexar+" -follow -type f|sort > .lista_fich";
 		system(cmd.c_str());
 		return TokenizarListaFicheros(".lista_fich");
 	}
@@ -103,21 +111,17 @@ bool TokenizadorClase::TokenizarDirectorio(const string& dirAIndexar) const
 bool TokenizadorClase::TokenizarListaFicheros(const string& i) const
 {
 	bool result = true;
-	//char separator = '\n';
 	string token;
 	fstream f(i);
 
 	getline(f, token);
-	istringstream buf(token);
 
-	while(getline(f, token))
+	while(!f.eof())
 	{
-		istringstream buf2(token);
-		string nombreFich;
-		getline(buf2, nombreFich, '.');
-
-		if (!Tokenizar(token, nombreFich+".tk"))
+		if (!Tokenizar(token))
 			result = false;
+
+		getline(f, token);
 	}
 	return result;
 }

@@ -54,13 +54,13 @@ private:
 	//string specialCaseToken;
 
 	void tokenizarConCasosEspeciales(const string& str, list<string>& tokens) const;
-	string getDelimiters() const;
-	bool findRealDelimiters(char c) const;
-	bool isDelimiter(char c) const;
+	//string getDelimiters(string& delimiters) const;
+	bool findRealDelimiters(const char& c) const;
+	bool isDelimiter(const char& c) const;
+	string getMinusSinAcentos(const string& token) const;
 
 public:
 
-	string getMinusSinAcentos(const string& token) const;
 	// Inicializa delimiters a delimitadoresPalabra; casosEspeciales a kcasosEspeciales; pasarAminuscSinAcentos a minuscSinAcentos
 	Tokenizador(const string& delimitadoresPalabra, const bool& kcasosEspeciales, const bool& minuscSinAcentos);
 	// Inicializa delimiters=",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t\n\r@";	casosEspeciales a true; pasarAminuscSinAcentos a false

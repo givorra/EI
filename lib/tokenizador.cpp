@@ -40,7 +40,7 @@ Tokenizador::~Tokenizador()
 	delimiters = "";
 }
 
-Tokenizador& Tokenizador::operator= (const Tokenizador& t)
+Tokenizador& Tokenizador::operator=(const Tokenizador& t)
 {
 	if(this != &t)
 	{
@@ -120,6 +120,11 @@ bool Tokenizador::Tokenizar(const string& NomFichEntr, const string& NomFichSal)
 	return true;
 }
 
+bool Tokenizador::Tokenizar(const string & i) const
+{
+	return Tokenizar(i, i+".tk");
+}
+
 bool Tokenizador::TokenizarDirectorio(const string& dirAIndexar) const
 {
 	struct stat dir;
@@ -148,7 +153,7 @@ bool Tokenizador::TokenizarListaFicheros(const string& i) const
 
 	while(!f.eof())
 	{
-		if (!Tokenizar(token, token+".tk"))
+		if (!Tokenizar(token))
 			result = false;
 
 		getline(f, token);
@@ -243,6 +248,7 @@ string Tokenizador::getMinusSinAcentos(const string& token) const
 void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& tokens) const
 {
 	TCasoEspecial status = URL;
+	string delimitadores = delimiters+" ";
 	char c;
 	string::size_type pos = 0;
 	string::size_type npos = 0;
@@ -284,7 +290,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			{
 				while(true)
 				{
-					npos = str.find_first_of(getDelimiters(), npos+1);
+					npos = str.find_first_of(delimitadores, npos+1);
 					if(npos > str.length() || urlDelimiters.find(str[npos]) == string::npos || str[npos] == '\0')	// Si encuentra un delimitador que no es de URL o se acaba el string...
 						break;
 				}
@@ -511,7 +517,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			case NORMAL:
 				if(!isDelimiter(str[pos]))
 				{
-					npos = str.find_first_of(getDelimiters(), pos);
+					npos = str.find_first_of(delimitadores, pos);
 					status = TOKENIZAR;
 					break;
 				}
@@ -570,13 +576,13 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			++npos;
 	}
 }
-
-string Tokenizador::getDelimiters() const
+/*
+string Tokenizador::getDelimiters(string& delimiters) const
 {
-	return " "+delimiters;
-}
+	delimiters = " "+(*this).delimiters;
+}*/
 
-bool Tokenizador::isDelimiter(char c) const
+bool Tokenizador::isDelimiter(const char& c) const
 {
 	if(c == '\0')
 		return true;
@@ -588,7 +594,7 @@ bool Tokenizador::isDelimiter(char c) const
 		return false;
 }
 
-bool Tokenizador::findRealDelimiters(char c) const
+bool Tokenizador::findRealDelimiters(const char& c) const
 {
 	if((unsigned char)c == 164)	// Simbolo euro en codificacion ISO-8859-15
 		return true;
