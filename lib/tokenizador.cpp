@@ -254,6 +254,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 	int nRigthPointAcronim 		= 0;
 	int nRigthGuionGuion 		= 0;
 
+	if(str.length() != 0)
 	while(!exit)
 	{
 		if(npos >= str.length())
@@ -284,7 +285,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 				while(true)
 				{
 					npos = str.find_first_of(getDelimiters(), npos+1);
-					if(urlDelimiters.find(str[npos]) == string::npos || str[npos] == '\0')	// Si encuentra un delimitador que no es de URL o se acaba el string...
+					if(npos > str.length() || urlDelimiters.find(str[npos]) == string::npos || str[npos] == '\0')	// Si encuentra un delimitador que no es de URL o se acaba el string...
 						break;
 				}
 				status = TOKENIZAR;
@@ -296,7 +297,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			{
 				npos = pos;
 				c = str[npos];
-				if(c == '.' || c == ',')
+				if((c == '.' || c == ',') && (pos == 0 || (str[pos-1] != '.' && str[pos-1] != ',')))
 					status = REAL1;	// AÑADIR 0
 				else if(c >= '0' && c <= '9')
 					status = REAL2;
@@ -562,7 +563,7 @@ void Tokenizador::tokenizarConCasosEspeciales(const string& str, list<string>& t
 			nRigthPointAcronim 		= 0;
 			nRigthGuionGuion		= 0;
 
-			if(str[npos] == '\0' || npos >= str.length())
+			if(npos >= str.length() || str[npos] == '\0')
 				exit = true;
 		}
 		if(npos != string::npos)

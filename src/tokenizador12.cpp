@@ -131,7 +131,7 @@ void testACRONIMOS()
     // La lista de tokens a devolver debería contener: "U.S.A, p1, e, g, p2, La"
     a.Tokenizar("Hack.4.Good p1 ", lt1);
     imprimirListaSTL(lt1);
-/*
+
     // La lista de tokens a devolver debería contener: "Hack.4.Good, p1" 
 
     a.DelimitadoresPalabra("");
@@ -152,7 +152,7 @@ void testACRONIMOS()
     a.DelimitadoresPalabra("&");
     a.Tokenizar("a&U.S.A p1 e.g. p2. La", lt1);
     imprimirListaSTL(lt1);
-    // La lista de tokens a devolver debería contener: "a, U.S.A, p1, e.g, p2., La"*/
+    // La lista de tokens a devolver debería contener: "a, U.S.A, p1, e.g, p2., La"
 }
 
 void
@@ -197,10 +197,10 @@ testGUIONES()
 int
 main(void)
 {
-    //testURL();
-    //testNUMEROS();
-    //testEMAIL();
+    testURL();
+    testNUMEROS();
+    testEMAIL();
     testACRONIMOS();
-    //testGUIONES();
+    testGUIONES();
 }
 
